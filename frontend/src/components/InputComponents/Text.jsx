@@ -1,27 +1,48 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   MDXEditor,
+  headingsPlugin,
   listsPlugin,
+  linkPlugin,
   quotePlugin,
   thematicBreakPlugin,
-  linkPlugin,
-  linkDialogPlugin,
   toolbarPlugin,
   UndoRedo,
   BoldItalicUnderlineToggles,
   CodeToggle,
   CreateLink,
-  ListsToggle,
+  linkDialogPlugin,
+  BlockTypeSelect,
+  ListsToggle
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 
-const MarkdownEditor = ({ handleInputChange, index, value }) => {
-  const timeoutRef = useRef();
-  const [showPlaceholder, setShowPlaceholder] = useState(true);
+const CustomHeadingButtons = () => {
+  return (
+    <BlockTypeSelect
+      options={[
+        { value: 'paragraph', label: 'Paragraph' },
+        { value: 'h1', label: 'Heading 1' },
+        { value: 'h2', label: 'Heading 2' },
+        { value: 'h3', label: 'Heading 3' }
+      ]}
+      className="flex items-center gap-1"
+    />
+  );
+};
 
-  useEffect(() => {
-    setShowPlaceholder(!value || value.trim() === '');
-  }, [value]);
+const CustomListButtons = () => {
+  return (
+    <ListsToggle
+      className="flex items-center gap-1"
+      unorderedListTitle="Bulleted List"
+      orderedListTitle="Numbered List"
+    />
+  );
+};
+
+const Text = ({ handleInputChange, index, value }) => {
+  const timeoutRef = useRef(null);
 
   const handleChangeAdapter = (newMarkdown) => {
     clearTimeout(timeoutRef.current);
@@ -30,54 +51,62 @@ const MarkdownEditor = ({ handleInputChange, index, value }) => {
     }, 500);
   };
 
-  return (
-    <div className="relative border-1 rounded-md border-zinc-700 p-2 bg-zinc-900" style={{ fontFamily: 'Poppins, sans-serif' }}>
-      {/* Load Poppins font dynamically */}
-      <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+  useEffect(() => {
+    return () => clearTimeout(timeoutRef.current);
+  }, []);
 
-      {/* Embedded placeholder */}
-      {showPlaceholder && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '1rem',
-            left: '1rem',
-            color: '#a1a1aa', // zinc-400
-            opacity: 0.5,
-            pointerEvents: 'none',
-            fontFamily: 'Poppins, sans-serif',
-          }}
-        >
-          Enter text...
-        </div>
-      )}
+  return (
+    <div className="w-full bg-[#191919] text-white rounded-md  p-2">
+      <style>{`
+  .custom-mdx-editor :where(.prose) h1 { font-size: 2rem; font-weight: bold; color: #ffffff; }
+  .custom-mdx-editor :where(.prose) h2 { font-size: 1.5rem; font-weight: bold; color: #ffffff; }
+  .custom-mdx-editor :where(.prose) h3 { font-size: 1.25rem; font-weight: bold; color: #ffffff; }
+  .custom-mdx-editor :where(.prose) p { font-size: 1rem; color: #e5e5e5; }
+  .custom-mdx-editor :where(.prose) ul,
+  .custom-mdx-editor :where(.prose) ol { 
+    margin-left: 1.5rem; 
+    color: #d1d5db; 
+    list-style-position: inside; 
+    list-style-type: disc; /* for ul */
+  }
+  .custom-mdx-editor :where(.prose) ol { 
+    list-style-type: decimal; /* for ol */
+  }
+  .custom-mdx-editor :where(.prose) blockquote { border-left: 4px solid #555; padding-left: 1rem; color: #aaa; font-style: italic; }
+  .custom-mdx-editor :where(.prose) code { background: none; font-family: 'Fira Mono', 'Menlo', 'Monaco', 'Consolas', monospace; padding: 0.2em 0.4em; border-radius: 4px; color: #93c5fd; }
+  .custom-mdx-editor :where(.prose) a { color: #60a5fa; text-decoration: underline; }
+`}</style>
+
 
       <MDXEditor
-        markdown={value}
+        markdown={value || ''}
         onChange={handleChangeAdapter}
-        className="dark-theme"
-        contentEditableClassName="prose prose-invert h-40 overflow-auto p-2 rounded-b-md focus:outline-none bg-zinc-900 text-white caret-white"
+        className="custom-mdx-editor"
+        contentEditableClassName="prose prose-invert overflow-auto focus:outline-none bg-transparent w-full max-w-full min-h-[200px]"
+        placeholder="Enter your text here..."
         plugins={[
+          headingsPlugin(),
+          listsPlugin(),
           quotePlugin(),
           thematicBreakPlugin(),
           linkPlugin(),
           linkDialogPlugin(),
-          listsPlugin({ checkListMaxIndent: 0 }),
           toolbarPlugin({
             toolbarContents: () => (
               <>
                 <UndoRedo />
                 <BoldItalicUnderlineToggles />
+                <CustomHeadingButtons />
+                <CustomListButtons />
                 <CodeToggle />
-                <ListsToggle />
                 <CreateLink />
               </>
-            ),
-          }),
+            )
+          })
         ]}
       />
     </div>
   );
 };
 
-export default MarkdownEditor;
+export default Text;

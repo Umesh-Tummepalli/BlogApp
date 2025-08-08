@@ -1,45 +1,39 @@
 import React from "react";
-import { TypeOutline, Image, Heading, Code,Plus,Video } from "lucide-react";
+import { Type, Image, Heading, Code, Plus, Video } from "lucide-react";
+
 const AddBlogToolBar = ({ handleAddBlogEl }) => {
+  const buttonClasses = "p-3 rounded-full text-gray-400 bg-[#242424] border border-gray-700 hover:bg-gradient-to-r from-purple-400 to-pink-600 hover:text-white transition-all duration-200";
+
   return (
-    <div className="group flex gap-1 w-fit py-3">
-        <button className="p-2 mx-1 rounded-full  cursor-pointer border-1">
-            <Plus />
-        </button>
-      <div className="flex gap-2 justify-start scale-x-0 duration-100  group-hover:scale-x-100 origin-left border-l-3 pl-1">
-        <button
-          className="p-2 mx-1 rounded-full hover:bg-[] cursor-pointer border-1  hover:bg-[#383838]"
-          onClick={() => {
-            handleAddBlogEl("heading");
-          }}
-        >
-          <Heading strokeWidth={2.25} />
-        </button>
-        <button
-          className="p-2 mx-1 rounded-full hover:bg-[] cursor-pointer border-1 hover:bg-[#383838]"
-          onClick={() => {
-            handleAddBlogEl("text");
-          }}
-        >
-          <TypeOutline />
-        </button>
-        <button
-          className="p-2 mx-1 rounded-full hover:bg-[] cursor-pointer border-1 hover:bg-[#383838]"
-          onClick={() => {
-            handleAddBlogEl("img");
-          }}
-        >
-          <Image strokeWidth={2.25} />
-        </button>
-        <button
-          className="p-2 mx-1 rounded-full hover:bg-[] cursor-pointer border-1 hover:bg-[#383838]"
-          onClick={() => {
-            handleAddBlogEl("video");
-          }}
-        >
-          <Video />
-        </button>
-      </div>
+    <div className="my-8">
+        <div className="flex items-center justify-center">
+            <div className="group relative flex items-center justify-center">
+                <div className="absolute flex items-center gap-4 transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:-translate-x-full group-hover:-mr-12">
+                    <button className={buttonClasses} onClick={() => handleAddBlogEl("heading")}>
+                        <Heading size={20} />
+                    </button>
+                    <button className={buttonClasses} onClick={() => handleAddBlogEl("text")}>
+                        <Type size={20} />
+                    </button>
+                </div>
+
+                <button className={`${buttonClasses} z-10 group-hover:rotate-45`}>
+                    <Plus size={24} />
+                </button>
+
+                <div className="absolute flex items-center gap-4 transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-1/2 group-hover:ml-12">
+                    <button className={buttonClasses} onClick={() => handleAddBlogEl("img")}>
+                        <Image size={20} />
+                    </button>
+                    <button className={buttonClasses} onClick={() => handleAddBlogEl("video")}>
+                        <Video size={20} />
+                    </button>
+                     <button className={buttonClasses} onClick={() => handleAddBlogEl("code")}>
+                        <Code size={20} />
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
   );
 };

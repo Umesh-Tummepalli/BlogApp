@@ -8,30 +8,25 @@ import Code from './InputComponents/Code';
 import Video from './InputComponents/Video';
 import { Trash } from 'lucide-react';
 
-// 1. Define animation variants for the container and list items
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      // Stagger the children's animations by 0.1 seconds
       staggerChildren: 0.1,
     },
   },
 };
 
 const itemVariants = {
-  // Items will start off-screen to the left and faded out
   hidden: { x: -50, opacity: 0 },
-  // Animate to their final position and fade in
   visible: {
     x: 0,
     opacity: 1,
-    transition: { type: 'spring', stiffness: 100 }, // A little spring bounce
+    transition: { type: 'spring', stiffness: 100 },
   },
-  // On exit, shrink and fade out
   exit: {
-    x: -300, // Slide out to the left
+    x: 300, 
     opacity: 0,
     transition: { duration: 0.3 },
   },
@@ -45,44 +40,41 @@ const EditableComponets = ({ contents, handleDelete, handleInputChange }) => {
       case 'text':
         return <Text value={data} handleInputChange={handleInputChange} index={index} />;
       case 'img':
-        // Renamed to match the component file name from the previous example
         return <Image value={data} handleInputChange={handleInputChange} index={index} />;
       case 'video':
-        // Renamed to match the component file name from the previous example
         return <Video value={data} handleInputChange={handleInputChange} index={index} />;
+      case 'code':
+        return <Code value={data} handleInputChange={handleInputChange} index={index} />;
       default:
         return null;
     }
   }
 
   return (
-    // 2. Apply the container variants to the list wrapper
     <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-4" // Adds space between items
+      className="space-y-6"
     >
       <AnimatePresence>
         {contents.map((item, index) => (
           <motion.div
-            key={item.id} // The key is essential for AnimatePresence
-            variants={itemVariants} // 3. Apply item variants here
-            exit="exit" // Specify the exit variant
-            layout // Smoothly animates re-ordering of other items
-            className="flex gap-4 group items-center p-2 rounded-lg"
+            key={item.id}
+            variants={itemVariants}
+            exit="exit"
+            layout
+            className="flex gap-4 group items-start p-4 rounded-lg border border-gray-700 bg-[#191919] hover:border-gray-600 transition-colors"
           >
-            <button
-              className="p-3 rounded-full border border-transparent opacity-30 group-hover:opacity-100 group-hover:bg-gray-100 transition-all"
-              onClick={() => {
-                handleDelete(index);
-              }}
-            >
-              <Trash className="w-5 h-5 text-gray-500" />
-            </button>
             <div className="flex-grow">
               {renderComponent(item.type, item.data, index)}
             </div>
+            <button
+              className="p-2 rounded-full text-gray-500 hover:text-white hover:bg-red-500/20 transition-all opacity-50 group-hover:opacity-100"
+              onClick={() => handleDelete(index)}
+            >
+              <Trash className="w-5 h-5" />
+            </button>
           </motion.div>
         ))}
       </AnimatePresence>
